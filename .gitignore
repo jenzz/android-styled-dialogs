@@ -6,6 +6,7 @@ gen
 .classpath
 .settings
 .checkstyle
+.project
 
 #IntelliJ IDEA
 *.iml
