@@ -19,6 +19,7 @@ package eu.inmite.android.lib.dialogs;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
@@ -39,6 +40,7 @@ public class SimpleDialogFragment extends BaseDialogFragment {
 	protected static String ARG_NEGATIVE_BUTTON = "negative_button";
 
 	protected int mRequestCode;
+	protected SimpleDialogListener mInlineListener;
 
 	public static SimpleDialogBuilder createBuilder(Context context, FragmentManager fragmentManager) {
 		return new SimpleDialogBuilder(context, fragmentManager, SimpleDialogFragment.class);
@@ -78,10 +80,15 @@ public class SimpleDialogFragment extends BaseDialogFragment {
 			builder.setPositiveButton(positiveButtonText, new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
+					if (mInlineListener != null) {
+						mInlineListener.onPositiveButtonClicked(mRequestCode);
+					}
+
 					ISimpleDialogListener listener = getDialogListener();
 					if (listener != null) {
 						listener.onPositiveButtonClicked(mRequestCode);
 					}
+					
 					dismiss();
 				}
 			});
@@ -92,15 +99,24 @@ public class SimpleDialogFragment extends BaseDialogFragment {
 			builder.setNegativeButton(negativeButtonText, new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
+					if (mInlineListener != null) {
+						mInlineListener.onNegativeButtonClicked(mRequestCode);
+					}
+					
 					ISimpleDialogListener listener = getDialogListener();
 					if (listener != null) {
 						listener.onNegativeButtonClicked(mRequestCode);
 					}
+					
 					dismiss();
 				}
 			});
 		}
 		return builder;
+	}
+	
+	protected void setListener(SimpleDialogListener listener) {
+		mInlineListener = listener;
 	}
 
 	protected String getMessage() {
@@ -122,6 +138,11 @@ public class SimpleDialogFragment extends BaseDialogFragment {
 	@Override
 	public void onCancel(DialogInterface dialog) {
 		super.onCancel(dialog);
+		
+		if (mInlineListener != null) {
+			mInlineListener.onCancelled(mRequestCode);
+		}
+
 		ISimpleDialogCancelListener listener = getCancelListener();
 		if (listener != null) {
 			listener.onCancelled(mRequestCode);
@@ -164,6 +185,7 @@ public class SimpleDialogFragment extends BaseDialogFragment {
 		private String mNegativeButtonText;
 
 		private boolean mShowDefaultButton = true;
+		private SimpleDialogListener mInlineListener;
 
 		protected SimpleDialogBuilder(Context context, FragmentManager fragmentManager, Class<? extends SimpleDialogFragment> clazz) {
 			super(context, fragmentManager, clazz);
@@ -215,6 +237,11 @@ public class SimpleDialogFragment extends BaseDialogFragment {
 			mNegativeButtonText = text;
 			return this;
 		}
+		
+		public SimpleDialogBuilder setListener(SimpleDialogListener listener) {
+			mInlineListener = listener;
+			return this;
+		}
 
 		/**
 		 * When there is neither positive nor negative button, default "close" button is created if it was enabled.<br/>
@@ -239,5 +266,17 @@ public class SimpleDialogFragment extends BaseDialogFragment {
 
 			return args;
 		}
+		
+		@Override
+		public DialogFragment show() {
+			SimpleDialogFragment dialog = (SimpleDialogFragment) super.show();
+
+			if (mInlineListener != null) {
+				dialog.setListener(mInlineListener);
+			}
+
+			return dialog;
+		}
+
 	}
 }

@@ -56,6 +56,7 @@ public abstract class BaseDialogFragment extends DialogFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		setRetainInstance(true);
 		Builder builder = new Builder(this, getActivity(), inflater, container);
 		return build(builder).create();
 	}
