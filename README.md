@@ -1,5 +1,10 @@
 # StyledDialogs for Android
 
+> **Note:** This is a hybrid version of the original library (https://github.com/inmite/android-styled-dialogs) and one of the forks (https://github.com/yarian/android-styled-dialogs).
+> It allows you to set an `OnClickListener` either inline via `setListener()` or via callbacks to the hosting `Activity`.
+> Note that the `DialogFragment`'s instance is retained when its hosting `Activity` will be destroyed (like on config changes),
+> so make sure that you do not keep reference to any `Activity` stuff in the inline callbacks or you will leak that `Activity`.
+
 This library makes styling and using dialogs _a piece of cake_.
 
  ![Screenshot of the dialogs](graphics/screenshot-small.png)
