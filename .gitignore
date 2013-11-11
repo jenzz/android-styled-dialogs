@@ -23,11 +23,8 @@ release.properties
 pom.xml.*
 
 #Ant
-build.xml
 ant.properties
 local.properties
-proguard.cfg
-proguard-project.txt
 
 #SVN
 .svn
